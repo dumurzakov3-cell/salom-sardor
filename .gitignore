@@ -1,0 +1,19 @@
+# Muhit o'zgaruvchilari va sirlar
+.env
+
+# Virtual muhit
+.venv/
+venv/
+ENV/
+
+# Ma'lumotlar bazasi va fayllar
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
