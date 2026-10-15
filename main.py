@@ -64,8 +64,8 @@ async def main() -> None:
     # Handler routerlarini ulash
     dp.include_router(main_router)
 
-    # Eski yangilanishlarni tozalash (drop pending updates)
-    await bot.delete_webhook(drop_pending_updates=True)
+    # Webhookni tozalash (yangi kelgan xabarlar o'chib ketmasligi uchun drop_pending_updates=False)
+    await bot.delete_webhook(drop_pending_updates=False)
     logger.info("Bot polling rejimida ishga tushirilmoqda...")
 
     try:

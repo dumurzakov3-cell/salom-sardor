@@ -1,10 +1,13 @@
 import re
+import logging
 from html import escape as html_quote
 from aiogram import Router, F
 from aiogram.filters import Command, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramAPIError
+
+logger = logging.getLogger(__name__)
 
 from app import texts, keyboards
 from app.states import ApplicationStates
@@ -334,9 +337,8 @@ async def process_confirm(
                 reply_markup=keyboards.get_admin_status_inline(app_id),
                 parse_mode="HTML"
             )
-        except Exception:
-            # Agar bot bloklangan bo'lsa yoki guruh topilmasa, asosiy jarayon to'xtamaydi
-            pass
+        except Exception as e:
+            logger.warning(f"Adminga ariza xabari yetkazilmadi (chat_id={chat_id}): {e}")
 
 # Kutilmagan har qanday narsani (stiker, rasm, video va h.k.) ushlab qoluvchi filtr (Standart 6)
 @application_router.message(ApplicationStates.full_name)
