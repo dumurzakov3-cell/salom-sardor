@@ -105,7 +105,7 @@ APP_ALREADY_EXISTS = (
 
 INVALID_NAME = (
     "⚠️ Ism-familiya noto'g'ri kiritildi.\n"
-    "Kamida 2 ta so'z (ism va familiya) yozing. Masalan: <i>Sardor Aliyev</i>"
+    "Iltimos, ismingizni to'g'ri kiriting. Masalan: <i>Sardor Aliyev</i>"
 )
 
 INVALID_PHONE = (

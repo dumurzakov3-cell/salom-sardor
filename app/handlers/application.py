@@ -102,7 +102,7 @@ async def process_course_selection(
         parse_mode="HTML"
     )
 
-# 2. F.I.Sh. qabul qilish
+# 2. F.I.Sh. qabul qilish (filtrsiz, har qanday kiritilgan matn to'g'ridan-to'g'ri qabul qilinadi)
 @application_router.message(ApplicationStates.full_name, F.text)
 async def process_full_name(message: Message, state: FSMContext) -> None:
     if message.text == texts.BTN_CANCEL:
@@ -111,17 +111,7 @@ async def process_full_name(message: Message, state: FSMContext) -> None:
         return
 
     raw_name = message.text.strip()
-    words = raw_name.split()
-    
-    # Validatsiya: kamida 2 ta so'z, harflar, 5-60 belgi
-    if len(words) < 2 or len(raw_name) < 5 or len(raw_name) > 60:
-        await message.answer(texts.INVALID_NAME, parse_mode="HTML")
-        return
-
-    # Belgilarni tekshirish (faqat harflar, apostrof va probellar)
-    cleaned_test = re.sub(r"[\s\'-’`]", "", raw_name)
-    if not cleaned_test.isalpha():
-        await message.answer(texts.INVALID_NAME, parse_mode="HTML")
+    if not raw_name:
         return
 
     safe_name = html_quote(raw_name)
