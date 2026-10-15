@@ -34,6 +34,7 @@ TIME_MAP = {
 }
 
 # 1. Kursga yozilishni boshlash
+@application_router.message(StateFilter("*"), Command("apply"))
 @application_router.message(StateFilter("*"), Command("register"))
 @application_router.message(StateFilter("*"), F.text == texts.BTN_REGISTER)
 async def start_apply(message: Message, state: FSMContext) -> None:
@@ -111,7 +112,8 @@ async def process_full_name(message: Message, state: FSMContext) -> None:
         return
 
     raw_name = message.text.strip()
-    if not raw_name:
+    if not raw_name or len(raw_name) < 3 or len(raw_name) > 100:
+        await message.answer(texts.INVALID_NAME, parse_mode="HTML")
         return
 
     safe_name = html_quote(raw_name)
@@ -330,7 +332,14 @@ async def process_confirm(
         except Exception as e:
             logger.warning(f"Adminga ariza xabari yetkazilmadi (chat_id={chat_id}): {e}")
 
-# Kutilmagan har qanday narsani (stiker, rasm, video va h.k.) ushlab qoluvchi filtr (Standart 6)
+# Kutilmagan har qanday narsani ushlab qoluvchi filtr
+@application_router.message(ApplicationStates.confirm)
+async def process_confirm_unexpected(message: Message) -> None:
+    await message.answer(
+        text="⚠️ Iltimos, arizani tasdiqlash yoki bekor qilish uchun yuqoridagi tugmalardan birini bosing.",
+        reply_markup=keyboards.get_confirm_inline()
+    )
+
 @application_router.message(ApplicationStates.full_name)
 @application_router.message(ApplicationStates.phone_number)
 @application_router.message(ApplicationStates.study_format)

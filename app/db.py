@@ -114,7 +114,7 @@ class Database:
             async with db.execute("""
                 SELECT a.*, u.full_name, u.phone_number, u.username
                 FROM applications a
-                JOIN users u ON a.user_id = u.user_id
+                LEFT JOIN users u ON a.user_id = u.user_id
                 WHERE a.id = ?;
             """, (app_id,)) as cursor:
                 row = await cursor.fetchone()
@@ -171,7 +171,7 @@ class Database:
                 SELECT a.id, a.created_at, u.full_name, u.phone_number, u.username,
                        a.course_name, a.study_format, a.preferred_time, a.district, a.status
                 FROM applications a
-                JOIN users u ON a.user_id = u.user_id
+                LEFT JOIN users u ON a.user_id = u.user_id
                 ORDER BY a.id DESC;
             """) as cursor:
                 rows = await cursor.fetchall()

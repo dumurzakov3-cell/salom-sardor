@@ -136,25 +136,29 @@ async def process_status_change(
         return
 
     status_name = STATUS_TEXTS.get(new_status, new_status)
-    admin_name = callback.from_user.full_name
+    from html import escape as html_quote
+    admin_name = html_quote(callback.from_user.full_name)
 
-    # Admin xabarini tahrirlash
-    old_text = callback.message.html_text
-    # "Holat:" qismini yangilash
-    if "Holat:" in old_text:
-        base_text = old_text.split("Holat:")[0].strip()
+    # Admin xabarini tahrirlash (HTML teglari buzilmasligini ta'minlash)
+    if isinstance(callback.message, Message):
+        old_text = callback.message.html_text or callback.message.text or ""
+        if "<b>Holat:</b>" in old_text:
+            base_text = old_text.split("<b>Holat:</b>")[0].strip()
+        elif "Holat:" in old_text:
+            base_text = old_text.split("Holat:")[0].rstrip("<b").rstrip("<").strip()
+        else:
+            base_text = old_text.strip()
+
         new_text = f"{base_text}\n\n<b>Holat:</b> {status_name} <i>(O'zgartirdi: {admin_name})</i>"
-    else:
-        new_text = f"{old_text}\n\n<b>Holat:</b> {status_name} <i>(O'zgartirdi: {admin_name})</i>"
 
-    try:
-        await callback.message.edit_text(
-            text=new_text,
-            reply_markup=keyboards.get_admin_status_inline(app_id),
-            parse_mode="HTML"
-        )
-    except TelegramAPIError:
-        pass
+        try:
+            await callback.message.edit_text(
+                text=new_text,
+                reply_markup=keyboards.get_admin_status_inline(app_id),
+                parse_mode="HTML"
+            )
+        except TelegramAPIError:
+            pass
 
     await callback.answer(f"Holat o'zgartirildi: {status_name}")
 

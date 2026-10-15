@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramAPIError
 
 from app import texts, keyboards
 
@@ -102,7 +103,10 @@ async def cb_course_foundation(callback: CallbackQuery) -> None:
 async def cb_back_to_main(callback: CallbackQuery, state: FSMContext) -> None:
     """Asosiy menyuga qaytish inline callback."""
     await state.clear()
-    await callback.message.delete()
+    try:
+        await callback.message.delete()
+    except TelegramAPIError:
+        pass
     await callback.message.answer(
         text=texts.WELCOME_TEXT,
         reply_markup=keyboards.get_main_menu(),
